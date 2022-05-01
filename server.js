@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
-const { readAndAppend, readFromFile } = require('./db/fsUtils');
-const db = require(`./db/db`)
+const { readAndAppend, readFromFile, writeToFile } = require('./db/fsUtils');
+const { fstat } = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
 const port = process.env.PORT || 3001;
 
@@ -23,15 +24,37 @@ app.get('/notes', (req, res) =>
 );
 
 app.post(`/api/notes`, (req, res) => {
+    req.body.id = uuidv4()
     readAndAppend(req.body, path.join(__dirname, `/db/db.json`));
     res.sendStatus(201);
 });
 
-console.log(db)
-
 app.get(`/api/notes`, (req, res) => {
-    res.status(200).json(db);
+    res.sendFile(path.join(__dirname, `/db/db.json`));
 });
+
+app.delete(`/api/notes/:title`, async (req, res) => {
+    const data = await readFromFile(path.join(__dirname, `/db/db.json`)).then(JSON.parse)
+    console.log('data: ', data);
+
+    const deletedNoteIndex = data.findIndex((element) => element.title === req.params.title);
+    data.splice(deletedNoteIndex, 1);
+    writeToFile(path.join(__dirname, `/db/db.json`), data);
+    res.sendStatus(201);
+});
+
+app.get(`/api/activenote/:title`, async (req, res) => {
+    let i = 0;
+    const data = await readFromFile(path.join(__dirname, `/db/db.json`)).then(JSON.parse)
+
+    data.forEach(element => {
+        if (element.title = req.params.title) {
+            res.status(200).json(element);
+        };
+        i++;
+    })
+    res.sendStatus(201);
+})
 
 //404 route
 

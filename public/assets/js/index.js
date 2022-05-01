@@ -95,6 +95,14 @@ const handleNoteDelete = (e) => {
   });
 };
 
+const getActiveNote = (title) =>
+  fetch(`/api/activenote/${title}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
   e.preventDefault();
