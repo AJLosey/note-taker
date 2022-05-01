@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { readAndAppend, readFromFile } = require('./db/fsUtils');
+const db = require(`./db/db`)
 
 const port = process.env.PORT || 3001;
 
@@ -22,9 +23,14 @@ app.get('/notes', (req, res) =>
 );
 
 app.post(`/api/notes`, (req, res) => {
-    console.log(req.body);
     readAndAppend(req.body, path.join(__dirname, `/db/db.json`));
     res.sendStatus(201);
+});
+
+console.log(db)
+
+app.get(`/api/notes`, (req, res) => {
+    res.status(200).json(db);
 });
 
 //404 route
