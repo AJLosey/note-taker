@@ -33,11 +33,11 @@ app.get(`/api/notes`, (req, res) => {
     res.sendFile(path.join(__dirname, `/db/db.json`));
 });
 
-app.delete(`/api/notes/:title`, async (req, res) => {
+app.delete(`/api/notes/:id`, async (req, res) => {
     const data = await readFromFile(path.join(__dirname, `/db/db.json`)).then(JSON.parse)
     console.log('data: ', data);
 
-    const deletedNoteIndex = data.findIndex((element) => element.title === req.params.title);
+    const deletedNoteIndex = data.findIndex((element) => element.id === req.params.id);
     data.splice(deletedNoteIndex, 1);
     writeToFile(path.join(__dirname, `/db/db.json`), data);
     res.sendStatus(200);
@@ -48,8 +48,11 @@ app.get(`/api/notes/:id`, async (req, res) => {
     console.log('data: ', data);
 
     const activeNoteData = data.find((element) => element.id === req.params.id);
-
-    res.json(activeNoteData);
+    if (!activeNoteData) {
+        res.sendStatus(404)
+    } else {
+        res.json(activeNoteData);
+    }
 })
 
 //404 route
