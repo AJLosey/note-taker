@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
-const { readAndAppend, readFromFile } = require('./db/fsUtils');
-const db = require(`./db/db`)
+const { readAndAppend, readFromFile, writeToFile } = require('./db/fsUtils');
+const db = require(`./db/db`);
+const { fstat } = require('fs');
 
 const port = process.env.PORT || 3001;
 
@@ -31,19 +32,23 @@ app.get(`/api/notes`, (req, res) => {
     res.status(200).json(db);
 });
 
-// const deleteNote = (id) =>
-//   fetch(`/api/notes/${id}`, {
-//     method: 'DELETE',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//   });
-
 app.delete(`/api/notes/:title`, (req, res) => {
     let i = 0;
     db.forEach(element => {
         if (element.title = req.params.title) {
-            db.splice(i, 1);
+            let newdb = db.splice(i, 1);
+            writeToFile(path.join(__dirname, `/db/db.json`), newdb);
+        };
+        i++;
+    })
+    res.sendStatus(201);
+});
+
+app.get(`/api/activenote/:title`, (req, res) => {
+    let i = 0;
+    db.forEach(element => {
+        if (element.title = req.params.title) {
+            res.status(200).json(element);
         };
         i++;
     })
