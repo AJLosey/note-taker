@@ -27,11 +27,28 @@ app.post(`/api/notes`, (req, res) => {
     res.sendStatus(201);
 });
 
-console.log(db)
-
 app.get(`/api/notes`, (req, res) => {
     res.status(200).json(db);
 });
+
+// const deleteNote = (id) =>
+//   fetch(`/api/notes/${id}`, {
+//     method: 'DELETE',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   });
+
+app.delete(`/api/notes/:title`, (req, res) => {
+    let i = 0;
+    db.forEach(element => {
+        if (element.title = req.params.title) {
+            db.splice(i, 1);
+        };
+        i++;
+    })
+    res.sendStatus(201);
+})
 
 //404 route
 
