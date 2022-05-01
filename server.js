@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const { readAndAppend, readFromFile } = require('./db/fsUtils');
 
 const port = process.env.PORT || 3001;
 
@@ -10,15 +11,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// GET Route for homepage
+
 app.get('/', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
-// GET Route for feedback page
+
 app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
+
+app.post(`/api/notes`, (req, res) => {
+    console.log(req.body);
+    readAndAppend(req.body, path.join(__dirname, `/db/db.json`));
+    res.sendStatus(201);
+});
 
 //404 route
 
