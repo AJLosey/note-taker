@@ -95,8 +95,8 @@ const handleNoteDelete = (e) => {
   });
 };
 
-const getActiveNote = (title) =>
-  fetch(`/api/activenote/${title}`, {
+const getActiveNote = (id) =>
+  fetch(`/api/notes/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
