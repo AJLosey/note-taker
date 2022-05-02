@@ -42,8 +42,8 @@ const saveNote = (note) =>
     body: JSON.stringify(note),
   });
 
-const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, {
+const deleteNote = (title) =>
+  fetch(`/api/notes/${title}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -54,17 +54,12 @@ const renderActiveNote = () => {
   hide(saveNoteBtn);
 
   if (activeNote.id) {
-    noteTitle.setAttribute('readonly', true);
-    noteText.setAttribute('readonly', true);
+
     noteTitle.value = activeNote.title;
     noteText.value = activeNote.text;
-  } else {
-    noteTitle.removeAttribute('readonly');
-    noteText.removeAttribute('readonly');
-    noteTitle.value = '';
-    noteText.value = '';
-  }
-};
+
+  };
+}
 
 const handleNoteSave = () => {
   const newNote = {
@@ -83,13 +78,11 @@ const handleNoteDelete = (e) => {
   e.stopPropagation();
 
   const note = e.target;
-  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
 
-  if (activeNote.id === noteId) {
-    activeNote = {};
-  }
+  let title = e.target.parentElement.children[0].innerHTML;
+  console.log(title)
 
-  deleteNote(noteId).then(() => {
+  deleteNote(title).then(() => {
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -104,9 +97,10 @@ const getActiveNote = (id) =>
   });
 
 // Sets the activeNote and displays it
-const handleNoteView = (e) => {
+const handleNoteView = async (e) => {
   e.preventDefault();
-  activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
+  let title = e.target.children[0].innerHTML;
+  activeNote = await getActiveNote(title);
   renderActiveNote();
 };
 
@@ -126,7 +120,6 @@ const handleRenderSaveBtn = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
-  console.log(notes)
   let jsonNotes = await notes.json();
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
