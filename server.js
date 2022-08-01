@@ -43,14 +43,14 @@ app.delete(`/api/notes/:id`, async (req, res) => {
     res.sendStatus(200);
 });
 
-app.get(`/api/notes/:id`, async (req, res) => {
+app.get(`/api/notes/:title`, async (req, res) => {
     const data = await readFromFile(path.join(__dirname, `/db/db.json`)).then(JSON.parse)
-    console.log('data: ', data);
 
-    const activeNoteData = data.find((element) => element.id === req.params.id);
+    const activeNoteData = data.find((element) => element.title === req.params.title);
     if (!activeNoteData) {
         res.sendStatus(404)
     } else {
+        console.log(activeNoteData);
         res.json(activeNoteData);
     }
 })

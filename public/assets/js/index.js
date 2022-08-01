@@ -1,3 +1,4 @@
+
 let noteTitle;
 let noteText;
 let saveNoteBtn;
@@ -99,16 +100,26 @@ const getActiveNote = (id) =>
 // Sets the activeNote and displays it
 const handleNoteView = async (e) => {
   e.preventDefault();
-  let title = e.target.children[0].innerHTML;
-  activeNote = await getActiveNote(title);
+  let title = e.target.innerHTML;
+  activeNote = await getActiveNote(title).then(x => x.json());
   renderActiveNote();
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
 const handleNewNoteView = (e) => {
   activeNote = {};
-  renderActiveNote();
+  console.log("here!")
+  if (saveNoteBtn.style?.display !== 'none') {
+    if (confirm("This action will discard unsaved changes. OK?")) {
+      noteTitle.value = "";
+      noteText.value = "";
+    }
+  } else {
+    noteTitle.value = "";
+    noteText.value = "";
+  }
 };
+
 
 const handleRenderSaveBtn = () => {
   if (!noteTitle.value.trim() || !noteText.value.trim()) {
